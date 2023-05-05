@@ -1,0 +1,10 @@
+version: "3"
+services:
+  nodejs_demo:
+    container_name: nodejs_demo
+    build: .
+    ports:
+      - 0.0.0.0:3333:3333
+    environment:
+      - DATABASE_NAME=testEnvironmentVariable
+#    command: poetry run python /code/mobs/manage.py runserver 0:8000
