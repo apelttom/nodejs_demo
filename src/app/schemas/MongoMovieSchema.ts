@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model } from 'mongoose';
 
 /**
  * Example mongo database schema's definition
@@ -6,19 +6,19 @@ import { Schema, model } from 'mongoose'
  * (like for notebooks to write down your ideas/dreams and later check them if fullfilled)
  */
 const MongoMovie = new Schema(
-  {
-    name: {
-      type: String,
-      required: true
+    {
+        name: {
+            type: String,
+            required: true
+        },
+        releasedDate: {
+            type: Date
+        },
+        genders: {
+            type: [String]
+        }
     },
-    releasedDate: {
-      type: Date
-    },
-    genders: {
-      type: [String]
-    }
-  },
-  { timestamps: true }
-)
+    { timestamps: true }
+);
 
-export default model('Movie', MongoMovie)
+export default model('Movie', MongoMovie);

@@ -106,3 +106,6 @@ dist
 # Compiled binary
 bin
 dist
+
+# Mac files
+.DS_Store

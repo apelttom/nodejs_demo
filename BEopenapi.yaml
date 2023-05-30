@@ -1,220 +1,224 @@
 openapi: 3.0.3
 info:
-  title: Node.js BE starter kit - OpenAPI 3.0
-  description: |-
-    This is a sample Back End server based on Node.js, Express, Typescript and MongoDB. You can create new Movies & put them into DB. You can list all Movies in the database, you can update movies, you can delete a movie. This project serves as a starter kit for any young aspiring Node.js BE developer.
-  contact:
-    email: tapeltauer-ext@kpmg.cz
-  license:
-    name: MIT
-    url: https://opensource.org/license/mit/
-  version: 1.0.1
+    title: Node.js BE starter kit - OpenAPI 3.0
+    description: |-
+        This is a sample Back End server based on Node.js, Express, Typescript and MongoDB. You can create new Movies & put them into DB. You can list all Movies in the database, you can update movies, you can delete a movie. This project serves as a starter kit for any young aspiring Node.js BE developer.
+    contact:
+        email: t.apeltauer@seznam.cz
+    license:
+        name: MIT
+        url: https://opensource.org/license/mit/
+    version: 1.0.1
 externalDocs:
-  description: Find out more about project
-  url: https://github.com/apelttom/BE-nodeJS-starter
+    description: Find out more about project
+    url: https://github.com/apelttom/BE-nodeJS-starter
 servers:
-  - url: http://localhost:3333/v1/api/
+    - url: http://localhost:3333/v1/api/
 tags:
-  - name: movie
-    description: Your personal movie database
-    externalDocs:
-      description: Details here
-      url: https://github.com/apelttom/BE-nodeJS-starter
+    - name: movie
+      description: Your personal movie database
+    #   externalDocs:
+    #       description: Details here
+    #       url: https://github.com/
 paths:
-  /movieAPI:
-    post:
-      tags:
-        - movie
-      summary: Add a new Movie to the list
-      description: Add a new Movie to the list
-      operationId: addMovie
-      requestBody:
-        description: Create a new Movie in the list
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Movie'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
+    /movieAPI:
+        post:
+            tags:
+                - movie
+            summary: Add a new Movie to the list
+            description: Add a new Movie to the list
+            operationId: addMovie
+            requestBody:
+                description: Create a new Movie in the list
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Movie'
+                required: true
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovieResponse'
+                '500':
+                    description: Internal server error
+        get:
+            tags:
+                - movie
+            summary: List all Movies from the DB
+            description: Returns a collection of Movies
+            operationId: getMovie
+            parameters:
+                - in: query
+                  name: createdAt
+                  description: Filter on date-time when an Movie was created
+                  schema:
+                      type: string
+                - in: query
+                  name: updatedAt
+                  description: Filter on date-time when an Movie was updated
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Movies'
+                '400':
+                    description: Invalid ID supplied
+                '404':
+                    description: Movie not found
+    /exampleAPI/{_id}:
+        get:
+            tags:
+                - movie
+            summary: Find Movie by ID
+            description: Returns a single Movie
+            operationId: getMovieById
+            parameters:
+                - name: _id
+                  in: path
+                  description: ID of Movie to return
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovieResponse'
+                '400':
+                    description: Invalid ID supplied
+                '404':
+                    description: Movie not found
+        put:
+            tags:
+                - movie
+            summary: Update an existing Movie
+            description: Update an existing Movie by Id
+            operationId: updateMovie
+            parameters:
+                - name: _id
+                  in: path
+                  description: ID of Movie to return
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                description: Update an existent Movie in the store
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Movie'
+                required: true
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MovieResponse'
+                '400':
+                    description: Invalid ID supplied
+                '404':
+                    description: Movie not found
+                '405':
+                    description: Validation exception
+        delete:
+            tags:
+                - movie
+            summary: Deletes an Movie
+            description: delete an Movie
+            operationId: deleteMovie
+            parameters:
+                - name: _id
+                  in: path
+                  description: Movie id to delete
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    id:
+                                        type: string
+                                        description: Database identificator
+                                        example: 640f91c7e01c80f01de8cb9c
+                '400':
+                    description: Invalid Movie id
+components:
+    schemas:
+        Movies:
+            type: array
+            items:
                 $ref: '#/components/schemas/MovieResponse'
-        '500':
-          description: Internal server error
-    get:
-      tags:
-        - movie
-      summary: List all Movies from the DB
-      description: Returns a collection of Movies
-      operationId: getMovie
-      parameters:
-        - in: query
-          name: createdAt
-          description: Filter on date-time when an Movie was created
-          schema:
-            type: string
-        - in: query
-          name: updatedAt
-          description: Filter on date-time when an Movie was updated
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Movies'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Movie not found
-  /exampleAPI/{_id}:
-    get:
-      tags:
-        - movie
-      summary: Find Movie by ID
-      description: Returns a single Movie
-      operationId: getMovieById
-      parameters:
-        - name: _id
-          in: path
-          description: ID of Movie to return
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MovieResponse'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Movie not found
-    put:
-      tags:
-        - movie
-      summary: Update an existing Movie
-      description: Update an existing Movie by Id
-      operationId: updateMovie
-      parameters:
-        - name: _id
-          in: path
-          description: ID of Movie to return
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent Movie in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Movie'
-        required: true
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MovieResponse'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Movie not found
-        '405':
-          description: Validation exception
-    delete:
-      tags:
-        - movie
-      summary: Deletes an Movie
-      description: delete an Movie
-      operationId: deleteMovie
-      parameters:
-        - name: _id
-          in: path
-          description: Movie id to delete
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
+        Movie:
+            type: object
+            properties:
+                key:
+                    type: string
+                    description: Database identificator
+                    example: e18af79d-aa2f-4f0c-b11b-ca07508b8b80
+                name:
+                    type: string
+                    description: Name of the Movie
+                    example: The Avengers
+                releasedDate:
+                    type: string
+                    format: date-time
+                    description: Released date of the world premiere
+                    example: 2023-04-27
+                genders:
+                    type: array
+                    items:
+                        type: string
+                    description: List of genders of the movie
+                    example: ['action', 'sci-fi']
+            xml:
+                name: movie
+        MovieResponse:
+            type: object
+            properties:
+                id:
                     type: string
                     description: Database identificator
                     example: 640f91c7e01c80f01de8cb9c
-        '400':
-          description: Invalid Movie id
-components:
-  schemas:
-    Movies:
-      type: array
-      items:
-        $ref: '#/components/schemas/MovieResponse'
-    Movie:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the Movie
-          example: The Avengers
-        releasedDate:
-          type: string
-          format: date-time
-          description: Released date of the world premiere
-          example: 2023-04-27
-        genders:
-          type: array
-          items:
-            type: string
-          description: List of genders of the movie
-          example: ['action', 'sci-fi']
-      xml:
-        name: movie
-    MovieResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Database identificator
-          example: 640f91c7e01c80f01de8cb9c
-        name:
-          type: string
-          description: Name of the Movie
-          example: The Avengers
-        releasedDate:
-          type: string
-          format: date-time
-          description: Released date of the world premiere
-          example: 2023-04-27
-        genders:
-          type: array
-          items:
-            type: string
-          description: List of genders of the movie
-          example: ['action', 'sci-fi']
-        # createdAt:
-        #   type: string
-        #   format: date-time
-        # updatedAt:
-        #   type: string
-        #   format: date-time
-        # __v:
-        #   type: integer
-        #   description: Version of the Movie
-        #   format: int32
-        #   example: 0
-      xml:
-        name: '##default'
+                name:
+                    type: string
+                    description: Name of the Movie
+                    example: The Avengers
+                releasedDate:
+                    type: string
+                    format: date-time
+                    description: Released date of the world premiere
+                    example: 2023-04-27
+                genders:
+                    type: array
+                    items:
+                        type: string
+                    description: List of genders of the movie
+                    example: ['action', 'sci-fi']
+                # createdAt:
+                #   type: string
+                #   format: date-time
+                # updatedAt:
+                #   type: string
+                #   format: date-time
+                # __v:
+                #   type: integer
+                #   description: Version of the Movie
+                #   format: int32
+                #   example: 0
+            xml:
+                name: '##default'

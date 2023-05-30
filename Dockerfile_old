@@ -1,0 +1,27 @@
+# Build Stage 1
+# This build created a staging docker image
+#
+FROM node:19-alpine3.17 AS appbuild
+# Create app directory
+WORKDIR /usr/src/app
+# Install app dependencies
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn install
+# Bundle app source
+COPY . ./
+RUN yarn build
+
+# Build Stage 2
+# This build takes the production build from staging build
+#
+FROM node:19-alpine3.17
+# Create app directory
+WORKDIR /usr/src/app
+# Install app dependencies
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn install
+COPY --from=appbuild /usr/src/app/dist ./dist
+EXPOSE 3333
+CMD [ "yarn", "start" ]

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Node BackEnd 4.0.1</title>
+    </head>
+    <body>
+        <p>Node.js demo Back End in version 4.0.1 is running. Using DATABASE_TYPE</p>
+        <button onclick="createMovieAndUpdateTable()">Create a random movie</button>
+        <table id="moviesTable">
+            <thead>
+                <tr>
+                    <th>Movie ID</th>
+                    <th>Movie Name</th>
+                    <th>Release Date</th>
+                    <th>Genders</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <script>
+            var intervalId = setInterval(function () {
+                listMovies();
+            }, 2000);
+
+            function createMovieAndUpdateTable() {
+                createMovie();
+            }
+
+            function createMovie() {
+                const host = window.location.host;
+                const xhr = new XMLHttpRequest();
+                const url = 'http://' + host + '/v1/api/movieAPI';
+                xhr.open('POST', url);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                const number = Math.floor(Math.random() * 99);
+                const dayNumber = Math.floor(Math.random() * 28);
+                const data =
+                    '{ "name": "Movie ' +
+                    number +
+                    '", "releasedDate": "2023-04-' +
+                    dayNumber +
+                    '", "genders": [ "action", "sci-fi" ] }';
+                xhr.send(data);
+            }
+
+            function listMovies() {
+                const host = window.location.host;
+                // Define the URL to make the GET request
+                const url = 'http://' + host + '/v1/api/movieAPI';
+
+                // Make the GET request
+                fetch(url)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Get the table body element
+                        const tableBody = document.querySelector('#moviesTable tbody');
+                        // Remove all rows from the tbody
+                        while (tableBody.firstChild) {
+                            tableBody.removeChild(tableBody.firstChild);
+                        }
+
+                        // Loop through the data and create a new row for each element
+                        data.forEach((element) => {
+                            const newRow = tableBody.insertRow();
+                            const idCell = newRow.insertCell(0);
+                            const nameCell = newRow.insertCell(1);
+                            const releasedCell = newRow.insertCell(2);
+                            const gendersCell = newRow.insertCell(3);
+
+                            idCell.textContent = element.key;
+                            nameCell.textContent = element.name;
+                            releasedCell.textContent = element.releasedDate;
+                            gendersCell.textContent = element.genders;
+                        });
+                    })
+                    .catch((error) => console.error(error));
+            }
+        </script>
+    </body>
+</html>

@@ -4,10 +4,10 @@
 // - API Routes
 // - Authentication Routes
 // - Documentation Routes
-import { type Request, type Response, Router } from 'express'
-import movieAPIRoutes from './App.MovieAPI.route'
+import { type Request, type Response, Router } from 'express';
+import movieAPIRoutes from './App.MovieAPI.route';
 
-const routes = Router()
+const routes = Router();
 
 /**
  * Simple responser handles everything aimed on base url http://localhost:3333/v1/api/
@@ -15,14 +15,14 @@ const routes = Router()
  * @param {Response} res
  */
 function baseResponser(req: Request, res: Response): void {
-  res.status(200).json({ message: 'Welcome to the Node.js Movie Database' })
+    res.status(200).json({ message: 'Welcome to the Node.js Movie Database' });
 }
 
-routes.get('/', baseResponser)
+routes.get('/', baseResponser);
 
 /**
  * Movie API routes as defined in App.MovieAPI.route
  */
-routes.use('/movieAPI', movieAPIRoutes)
+routes.use('/movieAPI', movieAPIRoutes);
 
-export default routes
+export default routes;

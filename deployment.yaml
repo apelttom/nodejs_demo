@@ -1,0 +1,69 @@
+# #Create namespaces https://learn.microsoft.com/en-us/answers/questions/128803/how-to-add-namespace-and-my-next-steps-in-azure-ak
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: test
+#   labels:
+#     name: test
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: dev
+#   labels:
+#     name: dev
+# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: nodejs-deployment #kubectl get deployment
+    #namespace: test # Set Namespace for deployment
+    labels:
+        app: nodejsdemo
+spec:
+    selector:
+        matchLabels:
+            app: nodejsdemo
+    replicas: 1
+    # type: RollingUpdate and type: Recreate :
+    # RollingUpdate: updates are performed in a safe, controlled, and efficient manner
+    # Recreate : strategy updates the deployment by first terminating all the old pods and then creating new pods with the updated version of the application
+    strategy:
+        type: RollingUpdate
+    template:
+        metadata:
+            labels:
+                app: nodejsdemo
+        spec:
+            containers:
+                - name: nodejsdemo
+                  image: node:current-alpine3.17
+                  ports:
+                      - containerPort: 3333
+                  resources: {} # Set resource limits for CPU/Memory https://learn.microsoft.com/en-us/azure/aks/developer-best-practices-resource-management
+                  # resources:
+                  #   requests:
+                  #     cpu: 100m
+                  #     memory: 128Mi
+                  #   limits:
+                  #     cpu: 250m
+                  #     memory: 256Mi
+---
+#Kubernetes: ClusterIP, NodePort, or Ingress? When to Use Each
+#https://www.howtogeek.com/devops/kubernetes-clusterip-nodeport-or-ingress-when-to-use-each/
+apiVersion: v1
+kind: Service
+metadata:
+    name: nodejsdemo-service #Serive name #cmd kubectl get service
+spec:
+    selector:
+        app: nodejsdemo
+    type: LoadBalancer
+    ports:
+        - protocol: TCP
+          # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+          port: 3333
+          targetPort: 3333
+          # Optional field
+          # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+          #nodePort: 32000

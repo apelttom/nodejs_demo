@@ -1,18 +1,13 @@
-import { type RedisConfig } from './db.redis.types'
+// Database-specific configurations like Host, Port & Name.
 
-const environment = 'development'
-const port = 6379
-const host = 'localhost'
-const credentials = ''
-const base = 'redis'
+export function getRedisURL(): string {
+    const port = process.env.DATABASE_PORT == null ? '6379' : process.env.DATABASE_PORT;
+    const host = process.env.DATABASE_HOST == null ? 'localhost' : process.env.DATABASE_HOST;
+    const username = process.env.DATABASE_USERNAME == null ? '' : process.env.DATABASE_USERNAME;
+    const password = process.env.DATABASE_PASSWORD == null ? '' : process.env.DATABASE_PASSWORD;
+    const base = process.env.DATABASE_BASE == null ? '' : process.env.DATABASE_BASE;
+    const credentials = password.length > 0 ? `${username}:${encodeURI(password)}@` : '';
+    const url = `${base}://${credentials}${host}:${port}`;
 
-export function getRedisLocalConfig(): RedisConfig {
-  const url = `${base}://${credentials}${host}:${port}`
-
-  return {
-    redisURL: url,
-    redisEnvironment: environment,
-    redisPort: port,
-    redisHost: host
-  }
+    return url;
 }

@@ -1,10 +1,10 @@
 version: "3"
 services:
-  nodejs_demo:
-    container_name: nodejs_demo
+  nodejs_back_end_demo:
+    container_name: nodejs_back_end_demo
     build: .
     ports:
-      - 0.0.0.0:3333:3333
-    environment:
-      - DATABASE_NAME=testEnvironmentVariable
+      - 0.0.0.0:8833:8833
+    env_file:
+      - example.env
 #    command: poetry run python /code/mobs/manage.py runserver 0:8000

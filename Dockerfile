@@ -3,10 +3,10 @@
 # base - run without tests
 # run_test - run with tests
 #----------------------------------------------------------------#
-ARG base_image=node:19-alpine3.17
+ARG base_image=node:current-alpine3.17
 ARG docker_test=base
-ARG docker_user=dockerusr
-ARG docker_group=docker
+# ARG docker_user=dockerusr
+# ARG docker_group=docker
 #----------------------------------------------------------------#
 ##################################################################
 
@@ -16,8 +16,8 @@ ARG docker_group=docker
 # Generic code 
 #----------------------------------------------------------------#
 FROM ${base_image} as base
-ARG docker_user
-ARG docker_group
+# ARG docker_user
+# ARG docker_group
 WORKDIR /src
 #----------------------------------------------------------------#
 ##################################################################
@@ -25,10 +25,13 @@ WORKDIR /src
 ##################################################################
 # CUSTOM code
 #----------------------------------------------------------------#
-COPY --chown=${docker_user}:${docker_group} package.json ./
-COPY --chown=${docker_user}:${docker_group} yarn.lock ./
+# COPY --chown=${docker_user}:${docker_group} package.json ./
+COPY package.json ./
+# COPY --chown=${docker_user}:${docker_group} yarn.lock ./
+COPY yarn.lock ./
 RUN yarn install
-COPY --chown=${docker_user}:${docker_group} . .
+# COPY --chown=${docker_user}:${docker_group} . .
+COPY . .
 RUN yarn build
 #----------------------------------------------------------------#
 ##################################################################
@@ -77,11 +80,12 @@ FROM ${docker_test} as release
 # Generic code
 #----------------------------------------------------------------#
 FROM ${base_image} as final
-ARG docker_user
-ARG docker_group
-USER ${docker_user}
+# ARG docker_user
+# ARG docker_group
+# USER ${docker_user}
 WORKDIR /app
-COPY --chown=${docker_user}:${docker_group} --from=release /src .
+# COPY --chown=${docker_user}:${docker_group} --from=release /src .
+COPY --from=release /src .
 #----------------------------------------------------------------#
 ##################################################################
 
