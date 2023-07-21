@@ -1,8 +1,7 @@
 import { type Document } from 'mongoose';
-import { type Repository } from 'redis-om';
-import { type MovieRequestBody } from '../interfaces/MovieRequestBody';
+import { type Entity, type Repository } from 'redis-om';
+import { type MovieEntity } from '../interfaces/MovieEntity';
 import MongoMovie from '../schemas/MongoMovieSchema';
-import { type RedisMovie } from '../schemas/RedisMovieSchema';
 
 class GetExampleService {
     /**
@@ -26,7 +25,7 @@ class GetExampleService {
      * @param {string} _id
      * @returns {RedisMovie}
      */
-    async runRedis(_id: string, repository: Repository<RedisMovie>): Promise<RedisMovie> {
+    async runRedis(_id: string, repository: Repository): Promise<Entity> {
         // Will try to find a movie in the REDIS DB using given DB ID. If not found, throws an error
         const movie = await repository.fetch(_id);
         if (movie === null) throw new Error('Idea not found in DB. 404');
@@ -37,10 +36,10 @@ class GetExampleService {
      * Return a movie based on _id saved in XXXXS
      *
      * @param {string} _id
-     * @returns {MovieRequestBody}
+     * @returns {MovieEntity}
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async runInMemory(_id: string, database: any): Promise<MovieRequestBody> {
+    async runInMemory(_id: string, database: any): Promise<MovieEntity> {
         const movie = database.get(_id);
         if (movie === null) throw new Error('Idea not found in DB. 404');
         // return new version of the movie
@@ -48,7 +47,7 @@ class GetExampleService {
         const name = movie.name;
         const releasedDate = movie.releasedDate;
         const genders = movie.genders;
-        const savedMovie: MovieRequestBody = { uuid, name, releasedDate, genders };
+        const savedMovie: MovieEntity = { uuid, name, releasedDate, genders };
         return savedMovie;
     }
 }

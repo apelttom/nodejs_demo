@@ -4,7 +4,27 @@ services:
     container_name: nodejs_back_end_demo
     build: .
     ports:
-      - 0.0.0.0:8833:8833
-    env_file:
-      - example.env
+      - 0.0.0.0:3333:3333
+    environment:
+      - NODE_ENV="development"
+      - HOST="localhost"
+      - PORT=3333
+      - LOG_LEVEL="DEBUG"
+      # -------  MONGO DB ------- 
+      # - DATABASE_TYPE="MONGO"
+      # - DATABASE_PORT=""
+      # - DATABASE_HOST="apeltauer-node-db.rgfiddt.mongodb.net"
+      # - DATABASE_USERNAME="tapeltauerext"
+      # - DATABASE_PASSWORD="DbtE0CkAdnrgiM7x"
+      # - DATABASE_BASE="mongodb+srv"
+      # - DATABASE_ENVIRONMENT="cloud"
+      # -------  REDIS DB ------- 
+      - DATABASE_TYPE="REDIS"
+      - DATABASE_PORT=6379
+      - DATABASE_HOST="localhost"
+      - DATABASE_USERNAME=""
+      - DATABASE_PASSWORD=""
+      - DATABASE_BASE="redis"
+      # -------  RAM DB ------- 
+      # - DATABASE_TYPE="RAM"
 #    command: poetry run python /code/mobs/manage.py runserver 0:8000

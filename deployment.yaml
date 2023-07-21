@@ -37,7 +37,7 @@ spec:
         spec:
             containers:
                 - name: nodejsdemo
-                  image: node:current-alpine3.17
+                  image: basicimage.azurecr.io/nodejs_demo-main:1.0.0
                   ports:
                       - containerPort: 3333
                   resources: {} # Set resource limits for CPU/Memory https://learn.microsoft.com/en-us/azure/aks/developer-best-practices-resource-management

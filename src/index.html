@@ -1,11 +1,12 @@
-<!DOCTYPE html>
+<!-- ONLY FOR DEVELOPEMENT PURPOSES SOLO !!! NO PRODUCTION USAGE -->
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>Node BackEnd 4.0.1</title>
+        <title>Node BackEnd 4.0.0</title>
     </head>
     <body>
-        <p>Node.js demo Back End in version 4.0.1 is running. Using DATABASE_TYPE</p>
+        <p>Node.js demo Back End in version 4.0.0 is running. Using DATABASE_TYPE</p>
         <button onclick="createMovieAndUpdateTable()">Create a random movie</button>
         <table id="moviesTable">
             <thead>
@@ -68,7 +69,7 @@
                             const releasedCell = newRow.insertCell(2);
                             const gendersCell = newRow.insertCell(3);
 
-                            idCell.textContent = element.key;
+                            idCell.textContent = element.uuid;
                             nameCell.textContent = element.name;
                             releasedCell.textContent = element.releasedDate;
                             gendersCell.textContent = element.genders;

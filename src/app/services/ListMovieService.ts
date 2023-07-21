@@ -1,7 +1,6 @@
-import { type Repository } from 'redis-om';
-import { type RedisMovie } from '../schemas/RedisMovieSchema';
+import { EntityId, type Repository } from 'redis-om';
 import MongoMovie from '../schemas/MongoMovieSchema';
-import { type MovieRequestBody } from '../interfaces/MovieRequestBody';
+import { type MovieEntity } from '../interfaces/MovieEntity';
 
 class ListMovieService {
     /**
@@ -22,8 +21,15 @@ class ListMovieService {
      * @param {unknown} filter
      * @returns {RedisMovie[]}
      */
-    async runRedis(filter: unknown, repository: Repository<RedisMovie>): Promise<RedisMovie[]> {
-        const movies = await repository.search().return.all();
+    async runRedis(filter: unknown, repository: Repository): Promise<MovieEntity[]> {
+        // ToDo: Add filter funcitonality
+        const entities = await repository.search().return.all();
+        const movies: MovieEntity[] = entities.map((entity) => ({
+            uuid: entity[EntityId] ?? 'NoUUID',
+            name: (entity.name as string) ?? 'NoName',
+            releasedDate: (entity.releasedDate as Date) ?? null,
+            genders: (entity.genders as string[]) ?? []
+        }));
         return movies;
     }
 
@@ -34,8 +40,8 @@ class ListMovieService {
      * @returns {void}
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async runInMemory(filter: unknown, database: any): Promise<MovieRequestBody[]> {
-        const movieArray: MovieRequestBody[] = [];
+    async runInMemory(filter: unknown, database: any): Promise<MovieEntity[]> {
+        const movieArray: MovieEntity[] = [];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         database.forEach(function (key: any, val: any) {
             // console.log('Found key: %s, val: %j', key, val);

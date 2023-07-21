@@ -32,32 +32,47 @@ By default this Back End runs on port 3333 and has 3 options of saving the data:
 
 Your default database will be in RAM in the Node.js program, so if you restart your service, you will loose all your data.
 
+For REDIS DB we recommend docker via `docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest`
+
 ## Environment variables
 
-You can change behavior of the application using environment variables. There is an example file called `example.env`.
+To change behavior of the service, create .env file like this one:
 
-How to have your own localhost settings:
+```
+# .env file
+NODE_ENV="development"
+HOST="localhost"
+PORT=3333
+LOG_LEVEL="DEBUG"
+# -------  MONGO DB -------
+# DATABASE_TYPE="MONGO"
+# DATABASE_PORT=""
+# DATABASE_HOST="apeltauer-node-db.rgfiddt.mongodb.net"
+# DATABASE_USERNAME="tapeltauerext"
+# DATABASE_PASSWORD="DbtE0CkAdnrgiM7x"
+# DATABASE_BASE="mongodb+srv"
+# DATABASE_ENVIRONMENT="cloud"
+# -------  REDIS DB -------
+# DATABASE_TYPE="REDIS"
+# DATABASE_PORT=6379
+# DATABASE_HOST="localhost"
+# DATABASE_USERNAME=""
+# DATABASE_PASSWORD=""
+# DATABASE_BASE="redis"
+# ------- RAM DB -------
+DATABASE_TYPE="RAM"
+```
 
-1. Create new file .env
-2. Copy content of example.env to .env
-3. Modify the file so you will have proper DB, host, port, etc.
+And play with your settings. If you do not have file, you will get default settings which is port 3333 and RAM DB on localhost in development environment with log level = debug.
 
-Explanation of the environment variables:
+## Startup, Liveness & Readiness
 
-`NODE_ENV` - development | test | production (this defines in which environment application runs and how tight security is)
-`HOST` - This does not do much, only helps with logging on the start of the app when host & port are logged
-`PORT` - This is very important, because it tells the application to run on a specific port
-`LOG_LEVEL` - This does not do much so far, but in future will be controlling how much the application logs
-`DATABASE_TYPE` - MONGO | REDIS | RAM (will determine where the data is stored). Default is RAM
-`DATABASE_PORT` - specify on which port the DB is running (no default value)
-`DATABASE_HOST` - specify the server on which the DB is running (ip address or DNS, no default value)
-`DATABASE_USERNAME` - username for db connection (no default value)
-`DATABASE_PASSWORD`- password for the db connection. Will be URL encoded
-`DATABASE_BASE` - the first part of the connection url to the database. Can be either redis or mongodb+srv or mongo (no default value)
-`DATABASE_ENVIRONMENT` - either cloud or local (if you use cloud MongoDB, no default value)
+ * If the application is running, you can verify it's startup status on an endpoint: `http://localhost:3333/health`
+ * Liveness endpoint is on: `http://localhost:3333/info`
+ * Readiness endpoint is on: `http://localhost:3333/metrics`
 
-And play with your settings. If you do not have .env file, you will get default settings which is port 3333 and RAM DB on localhost in development environment with log level = debug.
-
-## Some other handy commands: 
+## Some other handy commands:
 
 `package.json` contains set of interesting commands that you may or may not want to run separately. It is aimed to be cross-platform. Please report any issues.
+
+`http://localhost:3333/v1/api/` will provide you a simple html Front End webpage for developer's usage only! Before moving to PROD, delete it!!!

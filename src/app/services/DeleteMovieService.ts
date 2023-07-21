@@ -1,8 +1,6 @@
 import { type Document } from 'mongoose';
 import { type Repository } from 'redis-om';
-import { type MovieDeleteResponse } from '../interfaces/MovieDeleteResponse';
 import MongoMovie from '../schemas/MongoMovieSchema';
-import { type RedisMovie } from '../schemas/RedisMovieSchema';
 
 class DeleteExampleService {
     /**
@@ -20,13 +18,12 @@ class DeleteExampleService {
      * @param {string} _id
      * @returns {MovieDeleteResponse}
      */
-    async runRedis(_id: string, repository: Repository<RedisMovie>): Promise<MovieDeleteResponse> {
+    async runRedis(_id: string, repository: Repository): Promise<void> {
         await repository.remove(_id);
-        return { entityId: _id };
     }
 
     /**
-     * Delete a movie based on _id saved in XXXXS
+     * Delete a movie based on _id saved in RAM DB
      *
      * @param {string} _id
      * @returns {void}

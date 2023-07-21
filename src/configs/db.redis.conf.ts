@@ -6,7 +6,7 @@ export function getRedisURL(): string {
     const username = process.env.DATABASE_USERNAME == null ? '' : process.env.DATABASE_USERNAME;
     const password = process.env.DATABASE_PASSWORD == null ? '' : process.env.DATABASE_PASSWORD;
     const base = process.env.DATABASE_BASE == null ? '' : process.env.DATABASE_BASE;
-    const credentials = password.length > 0 ? `${username}:${encodeURI(password)}@` : '';
+    const credentials = username.length > 0 ? `${username}:${encodeURI(password)}@` : '';
     const url = `${base}://${credentials}${host}:${port}`;
 
     return url;

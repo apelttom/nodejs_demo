@@ -7,8 +7,9 @@ import type MongoMovie from '../../../src/app/schemas/MongoMovieSchema';
 import GetMovieService from '../../../src/app/services/GetMovieService';
 import UpdateMovieService from '../../../src/app/services/UpdateMovieService';
 import DeleteMovieService from '../../../src/app/services/DeleteMovieService';
-import { type MovieRequestBody } from '../../../src/app/interfaces/MovieRequestBody';
+import { type MovieEntity } from '../../../src/app/interfaces/MovieEntity';
 import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { EntityId, EntityKeyName } from 'redis-om';
 
 beforeEach(() => {
     dotenv.config();
@@ -49,17 +50,19 @@ describe("This test'll run all CRUD operations on MovieController (plus List).",
             await RedisDatabase.connectToDatabase();
             const repository = await RedisDatabase.getRepositoryForSchema();
             const postMovie = await CreateMovieService.runRedis(fake, repository);
-            const entityId = postMovie.entityId;
+            const entityId = postMovie[EntityId];
             // ID
             expect(entityId).not.toBeNull();
-            expect(entityId.toString()).toHaveLength(26);
+            expect(entityId).not.toBeUndefined();
+            expect(postMovie[EntityId]).toHaveLength(26);
             await RedisDatabase.disconnectDatabase();
         }
         if (databaseType === 'RAM') {
             const postMovie = await CreateMovieService.runInMemory(fake, DirtyDatabase);
             // ID
             expect(postMovie.uuid).not.toBeNull();
-            expect(postMovie.uuid.toString()).toHaveLength(36);
+            expect(postMovie.uuid).not.toBeUndefined();
+            expect(postMovie.uuid).toHaveLength(36);
             // Movie Name
             expect(postMovie.name).not.toBeNull();
             expect(postMovie.name).toBe('The Avengers');
@@ -108,34 +111,46 @@ describe("This test'll run all CRUD operations on MovieController (plus List).",
             await RedisDatabase.connectToDatabase();
             const repository = await RedisDatabase.getRepositoryForSchema();
             const postMovie = await CreateMovieService.runRedis(fake, repository);
-            const postID = postMovie.entityId;
-            const getMovie = await GetMovieService.runRedis(postID, repository);
-            const getID = getMovie.entityId;
-            // ID
-            expect(getID).not.toBeNull();
-            expect(getID.toString()).toBe(postID.toString());
-            expect(getID.toString()).toHaveLength(26);
+            const postID = postMovie[EntityId];
+            expect(postID).not.toBeUndefined();
+            if (postID !== undefined) {
+                const getMovie = await GetMovieService.runRedis(postID, repository);
+                const getID = getMovie[EntityId];
+                // ID
+                expect(getID).not.toBeNull();
+                expect(getID).not.toBeUndefined();
+                if (getID !== undefined) {
+                    expect(getID.toString()).toBe(postID.toString());
+                    expect(getID.toString()).toHaveLength(26);
+                }
+            }
             await RedisDatabase.disconnectDatabase();
         }
         if (databaseType === 'RAM') {
             const postMovie = await CreateMovieService.runInMemory(fake, DirtyDatabase);
             const postID = postMovie.uuid;
-            const getMovie = await GetMovieService.runInMemory(postID.toString(), DirtyDatabase);
-            const getID = getMovie.uuid;
-            // ID
-            expect(getID).not.toBeNull();
-            expect(getID.toString()).toBe(postID.toString());
-            expect(getID.toString()).toHaveLength(36);
-            // Movie Name
-            expect(getMovie.name).not.toBeNull();
-            expect(getMovie.name).toBe('Fast & Furious');
-            // Movie released Date
-            expect(getMovie.releasedDate).not.toBeNull();
-            expect(getMovie.releasedDate.getFullYear()).toBe(2004);
-            // Movie genders
-            expect(getMovie.genders).not.toBeNull();
-            expect(getMovie.genders).toHaveLength(2);
-            expect(getMovie.genders).toContain('action');
+            expect(postID).not.toBeUndefined();
+            if (postID !== undefined) {
+                const getMovie = await GetMovieService.runInMemory(postID.toString(), DirtyDatabase);
+                const getID = getMovie.uuid;
+                // ID
+                expect(getID).not.toBeNull();
+                expect(getID).not.toBeUndefined();
+                if (getID !== undefined) {
+                    expect(getID.toString()).toBe(postID.toString());
+                    expect(getID.toString()).toHaveLength(36);
+                    // Movie Name
+                    expect(getMovie.name).not.toBeNull();
+                    expect(getMovie.name).toBe('Fast & Furious');
+                    // Movie released Date
+                    expect(getMovie.releasedDate).not.toBeNull();
+                    expect(getMovie.releasedDate.getFullYear()).toBe(2004);
+                    // Movie genders
+                    expect(getMovie.genders).not.toBeNull();
+                    expect(getMovie.genders).toHaveLength(2);
+                    expect(getMovie.genders).toContain('action');
+                }
+            }
         }
     });
 
@@ -179,34 +194,46 @@ describe("This test'll run all CRUD operations on MovieController (plus List).",
             await RedisDatabase.connectToDatabase();
             const repository = await RedisDatabase.getRepositoryForSchema();
             const postMovie = await CreateMovieService.runRedis(fake1, repository);
-            const postID = postMovie.entityId;
-            const updateMovie = await UpdateMovieService.runRedis(postID, fake2, repository);
-            const updateID = updateMovie.entityId;
-            // ID
-            expect(updateID).not.toBeNull();
-            expect(updateID.toString()).toBe(postID.toString());
-            expect(updateID.toString()).toHaveLength(26);
+            const postID = postMovie[EntityId];
+            expect(postID).not.toBeUndefined();
+            if (postID !== undefined) {
+                const updateMovie = await UpdateMovieService.runRedis(postID, fake2, repository);
+                const updateID = updateMovie[EntityId];
+                // ID
+                expect(updateID).not.toBeNull();
+                expect(updateID).not.toBeUndefined();
+                if (updateID !== undefined) {
+                    expect(updateID.toString()).toBe(postID.toString());
+                    expect(updateID.toString()).toHaveLength(26);
+                }
+            }
             await RedisDatabase.disconnectDatabase();
         }
         if (databaseType === 'RAM') {
             const postMovie = await CreateMovieService.runInMemory(fake1, DirtyDatabase);
             const postID = postMovie.uuid;
-            const updateMovie = await UpdateMovieService.runInMemory(postID.toString(), fake2, DirtyDatabase);
-            const updateID = updateMovie.uuid;
-            // ID
-            expect(updateID).not.toBeNull();
-            expect(updateID.toString()).toBe(postID.toString());
-            expect(updateID.toString()).toHaveLength(36);
-            // Movie Name
-            expect(updateMovie.name).not.toBeNull();
-            expect(updateMovie.name).toBe('Lord of the Rings');
-            // Movie released Date
-            expect(updateMovie.releasedDate).not.toBeNull();
-            expect(updateMovie.releasedDate.getFullYear()).toBe(2009);
-            // Movie genders
-            expect(updateMovie.genders).not.toBeNull();
-            expect(updateMovie.genders).toHaveLength(3);
-            expect(updateMovie.genders).toContain('adventure');
+            expect(postID).not.toBeUndefined();
+            if (postID !== undefined) {
+                const updateMovie = await UpdateMovieService.runInMemory(postID.toString(), fake2, DirtyDatabase);
+                const updateID = updateMovie.uuid;
+                // ID
+                expect(updateID).not.toBeNull();
+                expect(updateID).not.toBeUndefined();
+                if (updateID !== undefined) {
+                    expect(updateID.toString()).toBe(postID.toString());
+                    expect(updateID.toString()).toHaveLength(36);
+                    // Movie Name
+                    expect(updateMovie.name).not.toBeNull();
+                    expect(updateMovie.name).toBe('Lord of the Rings');
+                    // Movie released Date
+                    expect(updateMovie.releasedDate).not.toBeNull();
+                    expect(updateMovie.releasedDate.getFullYear()).toBe(2009);
+                    // Movie genders
+                    expect(updateMovie.genders).not.toBeNull();
+                    expect(updateMovie.genders).toHaveLength(3);
+                    expect(updateMovie.genders).toContain('adventure');
+                }
+            }
         }
     });
 
@@ -243,37 +270,45 @@ describe("This test'll run all CRUD operations on MovieController (plus List).",
             await RedisDatabase.connectToDatabase();
             const repository = await RedisDatabase.getRepositoryForSchema();
             const postMovie = await CreateMovieService.runRedis(fake, repository);
-            const postID = postMovie.entityId;
-            const deleteMovie = await DeleteMovieService.runRedis(postID, repository);
-            const deleteID = deleteMovie.entityId;
-            // ID
-            expect(deleteID).not.toBeNull();
-            expect(deleteID.toString()).toBe(postID.toString());
-            expect(deleteID.toString()).toHaveLength(26);
-            // async function create(): Promise<void> {
-            //   await GetMovieService.runRedis(deleteID, repository);
-            // }
-            // // Movie should not be present in the database so we expect an error
-            // void expect(create()).rejects.toThrowError();
+            const postID = postMovie[EntityId];
+            const postKeyName = postMovie[EntityKeyName];
+            expect(postID).not.toBeUndefined();
+            expect(postKeyName).not.toBeUndefined();
+            expect(RedisDatabase.redisClient).not.toBeUndefined();
+            if (postID !== undefined && postKeyName !== undefined && RedisDatabase.redisClient !== undefined) {
+                const existsBefore = await RedisDatabase.redisClient.exists(postKeyName);
+                expect(existsBefore).toBe(1);
+                await DeleteMovieService.runRedis(postID, repository);
+                const existsAfter = await RedisDatabase.redisClient.exists(postKeyName);
+                expect(existsAfter).toBe(0);
+                // async function create(): Promise<void> {
+                //   await GetMovieService.runRedis(deleteID, repository);
+                // }
+                // // Movie should not be present in the database so we expect an error
+                // void expect(create()).rejects.toThrowError();
+            }
             await RedisDatabase.disconnectDatabase();
         }
         if (databaseType === 'RAM') {
             const postMovie = await CreateMovieService.runInMemory(fake, DirtyDatabase);
             const postID = postMovie.uuid;
-
-            const deleteMovie = await DeleteMovieService.runInMemory(postID.toString(), DirtyDatabase);
-            expect(deleteMovie).not.toBeNull();
-            if (deleteMovie !== null) {
-                const deleteID = deleteMovie.uuid;
-                // ID
-                expect(deleteID).not.toBeNull();
-                expect(deleteID.toString()).toBe(postID.toString());
-                expect(deleteID.toString()).toHaveLength(36);
-                // async function create(): Promise<void> {
-                //   await GetMovieService.runInMemory(deleteID, DirtyDatabase);
-                // }
-                // // Movie should not be present in the database so we expect an error
-                // void expect(create()).rejects.toThrowError();
+            expect(postID).not.toBeUndefined();
+            if (postID !== undefined) {
+                const deleteMovie = await DeleteMovieService.runInMemory(postID.toString(), DirtyDatabase);
+                expect(deleteMovie).not.toBeNull();
+                if (deleteMovie !== null) {
+                    const deleteID = deleteMovie.uuid;
+                    // ID
+                    expect(deleteID).not.toBeNull();
+                    expect(deleteID).not.toBeUndefined();
+                    expect(deleteID.toString()).toBe(postID.toString());
+                    expect(deleteID.toString()).toHaveLength(36);
+                    // async function create(): Promise<void> {
+                    //   await GetMovieService.runInMemory(deleteID, DirtyDatabase);
+                    // }
+                    // // Movie should not be present in the database so we expect an error
+                    // void expect(create()).rejects.toThrowError();
+                }
             }
         }
     });
@@ -296,7 +331,7 @@ describe("This test'll run all CRUD operations on MovieController (plus List).",
             await RedisDatabase.disconnectDatabase();
         }
         if (databaseType === 'RAM') {
-            const savedMovies: MovieRequestBody[] = await ListMovieService.runInMemory({}, DirtyDatabase);
+            const savedMovies: MovieEntity[] = await ListMovieService.runInMemory({}, DirtyDatabase);
             expect(savedMovies).not.toBeNull();
             expect(savedMovies.length).toBeGreaterThan(1);
         }

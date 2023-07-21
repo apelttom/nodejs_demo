@@ -4,7 +4,7 @@ info:
     description: |-
         This is a sample Back End server based on Node.js, Express, Typescript and MongoDB. You can create new Movies & put them into DB. You can list all Movies in the database, you can update movies, you can delete a movie. This project serves as a starter kit for any young aspiring Node.js BE developer.
     contact:
-        email: t.apeltauer@seznam.cz
+        email: tapeltauer-ext@kpmg.cz
     license:
         name: MIT
         url: https://opensource.org/license/mit/
@@ -17,9 +17,9 @@ servers:
 tags:
     - name: movie
       description: Your personal movie database
-    #   externalDocs:
-    #       description: Details here
-    #       url: https://github.com/
+      externalDocs:
+          description: Details here
+          url: https://dev.azure.com/KPMGDEVCZ/Pipelines/_git/nodejs_demo
 paths:
     /movieAPI:
         post:
